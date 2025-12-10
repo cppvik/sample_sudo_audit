@@ -14,8 +14,7 @@ using namespace std;
 
 thread child_monitor_thread;
 
-extern "C"
-{
+extern "C" {
     static int open_audit(unsigned int version, sudo_conv_t conversation,
                           sudo_printf_t sudo_plugin_printf, char *const settings[],
                           char *const user_info[], int submit_optind,
