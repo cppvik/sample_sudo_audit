@@ -153,6 +153,60 @@ extern "C" {
             closelog();
     }
 
+    static int accept_audit(const char *plugin_name, unsigned int plugin_type,
+                         char *const command_info[], char *const run_argv[],
+                         char *const run_envp[], const char **errstr) {
+        string log_message = "Accepted execution by plugin: ";
+        log_message += plugin_name;
+        log_message += " | command_info: ";
+        for (int i = 0; command_info[i] != nullptr; i++) {
+            string_view ci(command_info[i]);
+            if (ci.find("command=") == 0) {
+                log_message += "exe=";
+                log_message += ci.substr(strlen("command="));
+                break;
+            }
+        }
+
+        string args;
+        for (int i = 0; run_argv[i] != nullptr; i++) {
+            if (i > 2)
+                args += " ";
+            args += run_argv[i];
+        }
+        if (!args.empty()) {
+            log_message += "| args=\'" + args + "\' ";
+        }
+
+        log_audit_event(log_message);
+        return 1;
+    }
+
+     static int audit_reject(const char *plugin_name, unsigned int plugin_type,
+                    const char *audit_msg, char * const command_info[],
+                    const char **errstr) {
+        string log_message = "Rejected execution by plugin: ";
+        log_message += plugin_name;
+        if (audit_msg != nullptr) {
+            log_message += " | reason: '";
+            log_message += audit_msg;
+            log_message.erase(log_message.find_last_not_of("\n") + 1);
+            log_message += "'";
+        }
+        log_message += " | command_info: ";
+        for (int i = 0; command_info[i] != nullptr; i++)
+        {
+            string_view ci(command_info[i]);
+            if (ci.find("command=") == 0) {
+                log_message += "exe=";
+                log_message += ci.substr(strlen("command="));
+                break;
+            }
+        }
+        log_audit_event(log_message);
+        return 1;
+    }
+
     struct audit_plugin sudo_audit = {
         SUDO_AUDIT_PLUGIN,
         SUDO_API_VERSION,
@@ -161,9 +215,9 @@ extern "C" {
         /* close */
         close_audit,
         /* accept */
-        nullptr,
+        accept_audit,
         /* reject */
-        nullptr,
+        audit_reject,
         /* error */
         nullptr,
         /* show_version */
