@@ -62,8 +62,9 @@ inline void report_child_processes(pid_t parent_pid, pid_t child_pid, const stri
     log_audit_event(log_message);
 }
 
-inline string get_command_line(const string &entry_path, const string &fallback) {
-    const string path = entry_path + "/cmdline";
+// Get command line from /proc/[pid]/cmdline
+inline string get_command_line(const string &proc_path, const string &fallback) {
+    const string path = proc_path + "/cmdline";
     ifstream in(path, ios::in | ios::binary);
     if (!in.is_open())
         return fallback;
@@ -77,8 +78,9 @@ inline string get_command_line(const string &entry_path, const string &fallback)
     return string(buf.begin(), buf.end() - 1); // remove trailing space
 }
 
-inline string get_executable_path(const string &entry_path) {
-    const filesystem::path exe_path(entry_path + "/exe");
+// Get executable path from /proc/[pid]/exe
+inline string get_executable_path(const string &proc_path) {
+    const filesystem::path exe_path(proc_path + "/exe");
     if (filesystem::is_symlink(exe_path))
         return filesystem::read_symlink(exe_path).string();
     return "";
@@ -95,13 +97,14 @@ void detect_child_processes(pid_t parent_pid) {
         const auto dir_name = entry.path().filename().string();
         if (!all_of(dir_name.cbegin(), dir_name.cend(), ::isdigit))
             continue;
-        auto status_file = entry.path().string() + "/stat";
+        const string proc_dir_path(move(entry.path().string()));
+        auto status_file = proc_dir_path + "/stat";
         ifstream sf(status_file);
         if (sf.is_open()) {
             sf >> pid >> command >> state >> ppid;
             if (children.count(ppid) > 0 && children.count(pid) == 0) {
-                command = get_command_line(entry.path().string(), command);
-                auto exec_file = get_executable_path(entry.path().string());
+                command = get_command_line(proc_dir_path, command);
+                auto exec_file = get_executable_path(proc_dir_path);
                 children.insert(pid);
                 report_child_processes(ppid, pid, exec_file, command);
             }

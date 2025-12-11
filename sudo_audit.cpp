@@ -73,6 +73,7 @@ extern "C" {
             log_message += "<UNKNOWN> ";
         }
 
+        // Parse plugin options
         for (int i = 0; plugin_options[i] != nullptr; i++) {
             string_view option(plugin_options[i]);
 
@@ -94,6 +95,7 @@ extern "C" {
             }
         }
 
+        // Parse user and process info
         for (int i = 0; user_info[i] != nullptr; i++) {
             string_view ui(user_info[i]);
 
