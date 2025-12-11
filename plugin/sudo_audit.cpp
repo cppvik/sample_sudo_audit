@@ -46,7 +46,7 @@ extern "C" {
                 status = pclose(fp);
             }
             if (status == 0 && read_result != nullptr) {
-                resolved_path  = buffer.data();
+                resolved_path = read_result;
                 resolved_path.erase(resolved_path.find_last_not_of("\n") + 1);
             } else {
                 resolved_path  = submit_argv[1];
@@ -92,6 +92,8 @@ extern "C" {
                     *errstr = strdup(err.c_str());
                     return -1;
                 }
+            } else if (option.find("socket_path=") == 0) {
+                _socket_path = option.substr(strlen("socket_path="));
             }
         }
 

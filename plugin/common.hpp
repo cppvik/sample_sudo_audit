@@ -8,6 +8,7 @@ extern sudo_printf_t _sudo_plugin_printf;
 extern bool _enable_syslog;
 extern bool _enable_stdout;
 extern std::string _log_file;
+extern std::string _socket_path;
 extern ssize_t _child_poll_ms;
 
 extern std::atomic_bool _running;
