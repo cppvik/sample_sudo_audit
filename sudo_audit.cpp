@@ -54,15 +54,20 @@ extern "C" {
             
             try {
                 resolved_path = filesystem::canonical(resolved_path).string();
-                log_message += resolved_path + " ";
+                log_message += "exe=" +resolved_path + " ";
             } catch (const filesystem::filesystem_error &e) {
                 *errstr = strdup(e.what());
                 return -1;
             }
 
+            string args;
             for (int i = 2; submit_argv[i] != nullptr; i++) {
-                log_message += submit_argv[i];
-                log_message += " ";
+                if (i > 2)
+                    args += " ";
+                args += submit_argv[i];
+            }
+            if (!args.empty()) {
+                log_message += "| args=\'" + args + "\' ";
             }
         } else {
             log_message += "<UNKNOWN> ";
