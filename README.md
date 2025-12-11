@@ -1,6 +1,8 @@
 # Simple Sudo Audit Plugin in C++
 
-This is a simple sudo audit plugin written in C++. It logs executed commands to a specified log file / syslog / stdout.
+This is a simple sudo audit plugin written in C++. It logs executed commands to a specified log file / syslog / stdout / unix socket.
+
+It is designed to work with API 1.21+ of the sudo plugin system.
 
 ## Compilation
 
