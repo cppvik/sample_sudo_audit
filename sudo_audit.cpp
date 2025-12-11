@@ -16,7 +16,7 @@
 
 using namespace std;
 
-thread child_monitor_thread;
+static thread child_monitor_thread;
 
 extern "C" {
     static int open_audit(unsigned int version, sudo_conv_t conversation,

@@ -87,10 +87,10 @@ inline string get_executable_path(const string &proc_path) {
 }
 
 void detect_child_processes(pid_t parent_pid) {
-    static pid_t pid;
-    static string command;
-    static char state;
-    static pid_t ppid;
+    pid_t pid;
+    string command;
+    char state;
+    pid_t ppid;
     for (const auto& entry : filesystem::directory_iterator("/proc")) {
         if (!entry.is_directory())
             continue;
