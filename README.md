@@ -7,7 +7,7 @@ This is a simple sudo audit plugin written in C++. It logs executed commands to 
 To compile the plugin, use the following command:
 
 ```bash
-g++ -fPIC -shared -std=c++17 -o sudo_audit_plugin.so sudo_audit.cpp detect_children.cpp  -lpthread
+g++ -fPIC -shared -std=c++17 -o sudo_audit_plugin.so sudo_audit.cpp audit_helpers.cpp  -lpthread
 ```
 
 ## Configuration
